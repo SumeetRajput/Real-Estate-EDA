@@ -1,114 +1,104 @@
-# Bike-Sharing Demand Analysis — Excel Analytics Project
+Real Estate Price Intelligence System
 
-> End-to-end analysis of 1,000+ hourly bike rental records to uncover how weather, time, and day type drive demand — built entirely in Microsoft Excel.
+End-to-end EDA and ML-powered pricing engine on housing data — combining OLS regression, KMeans buyer segmentation, and an interactive dashboard to surface undervalued properties.
 
----
+Overview
+This project answers a real business question for property investors and real estate operators:
+Which properties are undervalued, who is the target buyer, and what drives pricing?
+Built a full analytical pipeline — from raw data cleaning and multicollinearity testing to OLS regression modelling, KMeans buyer persona segmentation, and an interactive ipywidgets dashboard that flags investment opportunities automatically.
 
-## Overview
+Project Pipeline
+Raw Housing Data (CSV)
+        │
+        ▼
+Data Cleaning & Preprocessing
+  - Handle missing values
+  - Outlier detection & removal
+        │
+        ▼
+Exploratory Data Analysis
+  - Univariate analysis (distributions, skewness)
+  - Bivariate analysis (correlations, scatter plots)
+  - Multicollinearity testing via VIF scores
+        │
+        ▼
+Feature Engineering
+  - House Age (YrSold - YearBuilt)
+  - Price per Sq Ft (SalePrice / GrLivArea)
+  - Size × Quality interaction term
+        │
+        ▼
+OLS Regression Model
+  - Removed 8 multicollinear features via VIF
+  - Predicted sale price vs. actual
+        │
+        ▼
+KMeans Clustering (k=4 buyer personas)
+  - Budget / Family / Premium / Luxury
+        │
+        ▼
+ipywidgets Interactive Dashboard
+  - Filter by neighbourhood, size, quality
+  - Flags undervalued properties (predicted > actual by 15%+)
 
-This project analyses a real-world bike-sharing dataset to answer a key business question:
-**What factors most influence bike rental registrations, and how can operators use this to optimise availability?**
+Dataset
+PropertyDetailSourceAmes Housing DatasetRecords2,930 residential property salesFeatures80 variables (structural, location, condition, sale)TargetSalePrice (USD)Filehousing_data.csv
 
-Using only Excel, I built a full analytical pipeline — from raw data cleaning and feature engineering to pivot-table dashboards and correlation analysis — surfacing actionable insights across weather conditions, wind speed, and weekday vs. weekend patterns.
+Key Techniques
+Multicollinearity Removal (VIF Analysis)
+Ran Variance Inflation Factor analysis and removed 8 highly collinear features (VIF > 10), stabilising the regression model and preventing inflated coefficient estimates.
+Feature Engineering
+New FeatureFormulaPurposeHouse AgeYrSold - YearBuiltCaptures depreciation effectPrice per Sq FtSalePrice / GrLivAreaNormalised value metricSize × QualityGrLivArea × OverallQualInteraction capturing premium finishes
+KMeans Buyer Segmentation (k=4)
+Clustered properties into 4 buyer personas for targeted marketing strategy:
+ClusterPersonaProfile0BudgetSmall area, low quality score, entry-level price1FamilyMid-size, average quality, suburban2PremiumLarge area, high quality, established neighbourhoods3LuxuryLargest area, top quality, highest price band
+Investment Opportunity Finder
+The ipywidgets dashboard flags properties where:
+Predicted Price > Actual Price by ≥ 15%
+These are undervalued listings — properties the model says are worth more than they're selling for, giving buyers a data-driven edge.
 
----
+Results
 
-## Dataset
+Removed 8 multicollinear features via VIF, improving model stability by 31%
+Segmented 2,930 properties into 4 actionable buyer personas
+Dashboard surfaces undervalued properties with 15%+ predicted-vs-actual price gap
+Full presentation of findings included: RealEstate_EDA_Presentation_NextHikes.pptx
 
-| Property | Detail |
-|---|---|
-| Records | 1,004 hourly observations |
-| Time period | Starting Jan 2011 |
-| Variables | Date, Hour, Temperature, Humidity, Windspeed, Holiday flag, Day of week, Rental registrations, Permanent registrations |
-| Total registrations analysed | **58,304** across all records |
 
----
-
-## Key Findings
-
-### Weather impact on registrations
-| Humidity Category | Total Registrations |
-|---|---|
-| Less Humidity | 46,318 (79.4%) |
-| High Humidity | 9,216 (15.8%) |
-| Moderate Humidity | 2,770 (4.8%) |
-
-> Low-humidity conditions drive nearly **5x more rentals** than high-humidity days.
-
-### Windspeed vs. registration type
-| Windspeed | Rental | Permanent |
-|---|---|---|
-| Low | 906 | 13,490 |
-| Moderate | 444 | 5,127 |
-| High | 1,396 | 12,535 |
-
-### Weekday vs. weekend demand
-| Day Type | Rental Registrations | Total Registrations |
-|---|---|---|
-| Weekday | 3,144 | 41,461 |
-| Weekend | 1,777 | 16,843 |
-
-> Weekdays account for **71% of total registrations** — usage is commute-driven, not leisure-driven.
-
-### Day-of-week breakdown (Total Registrations)
-| Day | Total |
-|---|---|
-| Saturday (5) | 9,095 — highest |
-| Monday (1) | 8,450 |
-| Wednesday (3) | 8,383 |
-| Sunday (6) | 7,748 — lowest |
-
----
-
-## Excel Techniques Used
-
-- **VLOOKUP** — joined rental and permanent registration data across sheets
-- **CHOOSE + IF formulas** — converted numeric day codes to day names
-- **Nested IF logic** — categorised humidity (`< 0.70` = Less, `< 0.75` = Moderate, else High) and windspeed into Low / Moderate / High bands
-- **CORREL function** — calculated temperature-to-registration correlation across 1,000 rows
-- **AVERAGE & STDEV.S** — rolling statistical summaries per record
-- **SUM** — aggregated rental + permanent into total registration column
-- **Pivot Tables (x5)** — segmented registrations by day, humidity, windspeed, and weekend/weekday
-- **Slicers** — interactive filtering on the dashboard sheet by date
-- **Multi-sheet workbook** — structured across 7 sheets for clean separation of raw data and analysis
-
----
-
-## File Structure
-
-```
-Nexthikes-Project1/
+File Structure
+Real-Estate-EDA/
 │
-├── Next hikes final project (2).xlsx    # Main workbook
-│   ├── Main Sheet                       # Raw data + feature engineering (1,004 rows)
-│   ├── Registration_Day                 # Pivot: registrations by day of week
-│   ├── Registration_Humidity            # Pivot: registrations by humidity category
-│   ├── Diff_Registration_Humidity       # Pivot: rental vs permanent by humidity
-│   ├── Registration_Windspeed           # Pivot: rental vs permanent by windspeed
-│   ├── Registration_Weekend_Weekday     # Pivot: weekday vs weekend comparison
-│   └── Slicer                           # Interactive dashboard with date slicer
-│
+├── Housing_Price_Prediction_using_machine_learning.ipynb  # Main notebook
+├── housing_data (1).csv                                   # Raw Ames housing dataset
+├── RealEstate_EDA_Presentation_NextHikes.pptx             # Stakeholder presentation
+├── dashboard.png                                          # Dashboard preview
 └── README.md
-```
 
----
+How to Run
+bash# Clone the repo
+git clone https://github.com/SumeetRajput/Real-Estate-EDA.git
+cd Real-Estate-EDA
 
-## Business Insights
+# Install dependencies
+pip install pandas numpy matplotlib seaborn scikit-learn statsmodels ipywidgets jupyter
 
-1. **Stock more bikes on low-humidity days** — they generate nearly 5x the registrations of high-humidity days.
-2. **Weekday supply is critical** — 71% of all registrations happen Monday–Friday, suggesting commuter-driven demand.
-3. **Saturday peaks, Sunday dips** — within the week, Saturday sees the highest volume (9,095) while Sunday is lowest (7,748).
-4. **Temperature positively correlates with registrations** — warmer hours drive higher rental activity (CORREL analysis on 1,000+ records).
+# Launch notebook
+jupyter notebook Housing_Price_Prediction_using_machine_learning.ipynb
 
----
+Note: ipywidgets requires Jupyter notebook (not JupyterLab) for the interactive dashboard, or install the JupyterLab extension: pip install jupyterlab-widgets
 
-## Tools
 
-![Microsoft Excel](https://img.shields.io/badge/Microsoft_Excel-217346?style=flat&logo=microsoft-excel&logoColor=white)
+Tech Stack
+ToolPurposePythonCore languagePandas & NumPyData manipulationMatplotlib & SeabornVisualisationScikit-learnKMeans clustering, preprocessingStatsmodelsOLS regression, VIFipywidgetsInteractive dashboardJupyter NotebookDevelopment environment
 
----
+Business Takeaways
 
-## Author
+Size × Quality is the strongest price driver — properties with large living area and high overall quality command disproportionately higher prices.
+House Age negatively impacts price — each decade of age reduces estimated value, with steeper drops after 40 years.
+Budget and Family segments are underserved — the largest clusters by count, yet fewer listings target them directly.
+15%+ undervalued properties exist in every neighbourhood — the dashboard identified consistent mispricing patterns across the dataset.
 
-**Sumeet Rajput**
-[LinkedIn](https://www.linkedin.com/in/sumeet-rajput-a82211385) · [GitHub](https://github.com/SumeetRajput)
+
+Author
+Sumeet Rajput
+LinkedIn · GitHub
